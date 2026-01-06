@@ -43,6 +43,14 @@ style: |
 
 ---
 
+## La méthode Waterfall (En cascade)
+
+![w:900 Waterfall](./images/waterfall.webp)
+
+
+
+---
+
 ## Travail à faire
 
 ### Développer l'Application Event Management
@@ -58,17 +66,15 @@ style: |
 
 ## Contexte
 
-* **Projet de Fin de Formation :**  
-  Travail réalisé dans le cadre du projet de fin de formation, en commençant par la branche technique.
+*   **Projet de Fin de Formation:** Travail réalisé dans le cadre du projet de fin de formation, en commençant par la branche technique.
 
-* **Processus 2TUP :**  
-  Le projet suit la méthodologie 2TUP (Processus de développement en Y), avec séparation des branches Fonctionnelle, Technique et Réalisation.
+*   **Processus 2TUP:** Le projet suit la méthodologie 2TUP (Processus de développement en Y), avec séparation des branches Fonctionnelle, Technique et Réalisation.
+  
 ---
 
-![w:700 2TUP](./images/2tup.png)
+![w:600 2TUP](./images/2tup.png)
 
-* **Renforcement des Compétences :**  
-  Mise en pratique des compétences Laravel 12 sans outils d'IA, en s'appuyant sur les acquis précédents.
+*   **Renforcement des Compétences:** Mise en pratique des compétences Laravel 12 sans outils d'IA, en s'appuyant sur les acquis précédents.
 
 ---
 
@@ -76,7 +82,7 @@ style: |
 
 ### Les technologies à utiliser
 
-1. **Base de données :** MySQL  
+1. Exigences:e données :** MySQL  
 2. **Framework :** Laravel 12  
 3. **Architecture N-Tiers :**
    - **Controller :** Gestion des requêtes HTTP
@@ -103,7 +109,7 @@ style: |
 
 ---
 
-## Analyse Fonctionnelle
+## Analyse: Analyse Fonctionnelle
 
 ![w:900 Use Case Diagram](./images/useCase.png)
 
@@ -117,5 +123,5 @@ style: |
 
 ## Sujet - Live coding
 
-* Bouton **“Ajouter un événement”** ouvrant une modale de création.
+* Bouton **"Ajouter un événement"** ouvrant une modale de création.
 * Barre de recherche filtrant les événements par titre en temps réel.
