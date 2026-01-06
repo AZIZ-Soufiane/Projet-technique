@@ -45,7 +45,7 @@ style: |
 
 ## La méthode Waterfall (En cascade)
 
-![w:900 Waterfall](./images/waterfall.png)
+![w:900 Waterfall](./images/Waterfall.png)
 
 
 
