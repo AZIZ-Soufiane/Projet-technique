@@ -1,0 +1,26 @@
+@startuml
+left to right direction
+
+actor Visitor
+actor Admin
+
+rectangle "Event Management System" {
+  usecase "View Events" as VE
+  usecase "Manage Events" as ME
+
+  usecase "View Event Details" as VED
+  usecase "Search Events by Title" as SET
+  usecase "Access Event Details" as AED
+  usecase "Filter Events by Category" as FEC
+}
+
+Visitor --> VE
+Admin --> VE
+Admin --> ME
+
+VED ..> VE : <<extend>>
+SET ..> ME : <<extend>>
+AED ..> ME : <<extend>>
+FEC ..> ME : <<extend>>
+
+@enduml
