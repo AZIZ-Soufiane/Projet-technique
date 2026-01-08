@@ -56,11 +56,12 @@ style: |
 ### Développer l'Application Event Management
 * **Partie Publique :**  
   Interface permettant aux visiteurs de consulter les événements.  
-  Fonctionnalités : Recherche par titre, filtre par Categories, pagination (10 éléments/page).
+  Fonctionnalités : pagination (10 éléments/page).
 
 * **Partie Admin :**  
   Tableau de bord sécurisé pour la gestion des événements.  
-  Fonctionnalités : CRUD des événements, modales pour ajout/édition, AJAX pour les mises à jour asynchrones.
+  Fonctionnalités : CRUD des événements, modales pour ajout/édition,Recherche par titre, filtre par Categories, AJAX pour les mises à jour asynchrones.
+
 
 ---
 
