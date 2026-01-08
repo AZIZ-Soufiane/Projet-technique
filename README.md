@@ -45,7 +45,7 @@ style: |
 
 ## La méthode Waterfall (En cascade)
 
-![w:900 Waterfall](./images/waterfall.png)
+![w:900 Waterfall](./images/Waterfall.png)
 
 
 
@@ -56,7 +56,7 @@ style: |
 ### Développer l'Application Event Management
 * **Partie Publique :**  
   Interface permettant aux visiteurs de consulter les événements.  
-  Fonctionnalités : Recherche par titre, filtre par categories, pagination (10 éléments/page).
+  Fonctionnalités : Recherche par titre, filtre par Categories, pagination (10 éléments/page).
 
 * **Partie Admin :**  
   Tableau de bord sécurisé pour la gestion des événements.  
@@ -111,13 +111,13 @@ style: |
 
 ## Analyse: Analyse Fonctionnelle
 
-![w:900 Use Case Diagram](./images/useCase.png)
+![w:500 Use Case Diagram](./images/useCase.png)
 
 ---
 
 ## Conception
 
-![w:450 Class Diagram](./images/ClassDiagram.png)
+![w:200 Class Diagram](./images/ClassDiagram.png)
 
 ---
 
