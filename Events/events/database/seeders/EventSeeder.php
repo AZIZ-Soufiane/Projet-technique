@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use App\Models\Event;
 use App\Models\Category;
 
@@ -19,7 +18,7 @@ class EventSeeder extends Seeder
         $header = fgetcsv($file); // Skip header
 
         while (($data = fgetcsv($file)) !== false) {
-            $eventId = DB::table('events')->insertGetId([
+            $event = Event::create([
                 'id' => $data[0],
                 'title' => $data[1],
                 'description' => $data[2],
@@ -35,17 +34,10 @@ class EventSeeder extends Seeder
             // Categories are pipe-separated (|) in the CSV
             $categoryNames = explode('|', $data[6]);
             foreach ($categoryNames as $categoryName) {
-                $category = DB::table('categories')
-                    ->where('name', trim($categoryName))
-                    ->first();
+                $category = Category::where('name', trim($categoryName))->first();
                 
                 if ($category) {
-                    DB::table('category_event')->insert([
-                        'event_id' => $eventId,
-                        'category_id' => $category->id,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
+                    $event->categories()->attach($category->id);
                 }
             }
         }

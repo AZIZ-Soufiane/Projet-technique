@@ -3,8 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class UserSeeder extends Seeder
 {
@@ -18,11 +17,11 @@ class UserSeeder extends Seeder
         $header = fgetcsv($file); // Skip header
 
         while (($data = fgetcsv($file)) !== false) {
-            DB::table('users')->insert([
+            User::create([
                 'id' => $data[0],
                 'name' => $data[1],
                 'email' => $data[2],
-                'password' => $data[3], // Already hashed in CSV or needs hashing? Prompt says "$2y$12$..." which is a hash.
+                'password' => $data[3],
                 'role' => $data[4],
                 'created_at' => $data[5],
                 'updated_at' => $data[6],

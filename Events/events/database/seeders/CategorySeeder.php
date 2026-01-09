@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Category;
 
 class CategorySeeder extends Seeder
 {
@@ -17,7 +17,7 @@ class CategorySeeder extends Seeder
         $header = fgetcsv($file); // Skip header
 
         while (($data = fgetcsv($file)) !== false) {
-            DB::table('categories')->insert([
+            Category::create([
                 'id' => $data[0],
                 'name' => $data[1],
                 'created_at' => $data[2],
