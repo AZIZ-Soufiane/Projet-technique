@@ -1,4 +1,0 @@
-id,name,email,password,role,created_at,updated_at
-1,Admin User,admin@example.com,$2y$12$K.x.z.x.x.x.x.x.x.x.x.x.x.x.x,admin,2026-01-01 10:00:00,2026-01-01 10:00:00
-2,John Doe,john@example.com,$2y$12$K.x.z.x.x.x.x.x.x.x.x.x.x.x.x,user,2026-01-01 10:00:00,2026-01-01 10:00:00
-3,Jane Smith,jane@example.com,$2y$12$K.x.z.x.x.x.x.x.x.x.x.x.x.x.x,user,2026-01-01 10:00:00,2026-01-01 10:00:00
