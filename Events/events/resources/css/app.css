@@ -1,7 +1,9 @@
 @import 'tailwindcss';
+@import 'preline/plugin';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
+@source '../../node_modules/preline/components/**/*.js';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 

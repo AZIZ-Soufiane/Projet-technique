@@ -4,6 +4,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AdminEventController;
 
+// Language Switching Route
+Route::get('/locale/{lang}', function ($lang) {
+    if (in_array($lang, ['en', 'fr'])) {
+        session(['locale' => $lang]);
+        app()->setLocale($lang);
+    }
+    return redirect()->back();
+})->name('locale.switch');
+
 Route::get('/', [EventController::class, 'index'])->name('home');
 Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
 
