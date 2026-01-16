@@ -1,0 +1,4 @@
+id,title,description,event_date,image,status,categories,created_at,updated_at
+1,Tech Conference 2026,Annual technology conference,2026-03-15 09:00:00,tech_conf.jpg,published,Technology|Culture,2026-01-01 10:00:00,2026-01-01 10:00:00
+2,Music Festival,Live music from top artists,2026-06-20 18:00:00,music_fest.jpg,draft,Entertainment|Culture,2026-01-02 11:30:00,2026-01-02 11:30:00
+3,Art Exhibition,Modern art showcase,2026-04-10 10:00:00,art_exhibit.jpg,published,Technology|Entertainment,2026-01-03 14:15:00,2026-01-03 14:15:00
