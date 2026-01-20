@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Services\EventService;
 use App\Services\CategoryService;
+use App\Http\Requests\Admin\StoreEventRequest;
+use App\Http\Requests\Admin\UpdateEventRequest;
 use Illuminate\Http\Request;
 
 class AdminEventController extends Controller
@@ -34,33 +36,18 @@ class AdminEventController extends Controller
         return view('admin.events.index', compact('events', 'categories'));
     }
 
-    public function store(Request $request)
+    public function store(StoreEventRequest $request)
     {
-        // Validation logic stays in controller (or moves to FormRequest)
-        $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
-            'event_date' => 'required|date',
-            'categories' => 'required|array',
-            'status' => 'required|in:draft,published',
-            'image' => 'nullable|image',
-        ]);
+        $validated = $request->validated();
 
         $this->eventService->createEvent($validated, $request->file('image'));
 
         return response()->json(['message' => 'Event created successfully']);
     }
 
-    public function update(Request $request, Event $event)
+    public function update(UpdateEventRequest $request, Event $event)
     {
-         $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
-            'event_date' => 'required|date',
-            'categories' => 'required|array',
-            'status' => 'required|in:draft,published',
-             'image' => 'nullable|image',
-        ]);
+         $validated = $request->validated();
 
         $this->eventService->updateEvent($event, $validated, $request->file('image'));
 
