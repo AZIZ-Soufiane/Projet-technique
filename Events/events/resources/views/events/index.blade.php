@@ -10,7 +10,7 @@
             </div>
             
             <!-- Events Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 my-24">
                 @foreach ($events as $event)
                     <a href="{{ route('events.show', $event) }}" class="group bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full border border-slate-200 overflow-hidden hover:-translate-y-2">
                         <!-- Event Image -->
@@ -57,7 +57,7 @@
             </div>
 
             <!-- Pagination -->
-            <div class="mt-16 flex justify-center">
+            <div class="mt-24 flex justify-center">
                 <div class="space-y-4">
                     {{ $events->onEachSide(1)->links('pagination::tailwind') }}
                 </div>
