@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="py-12">
+    <div class="py-12" x-data="adminEvents()" x-init="init()">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header Section -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
@@ -17,7 +17,7 @@
                             FR
                         </a>
                     </div>
-                    <button onclick="openCreateModal()" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg shadow-blue-600/30 transition-all duration-200 transform hover:scale-105 whitespace-nowrap">
+                    <button @click="openCreateModal()" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg shadow-blue-600/30 transition-all duration-200 transform hover:scale-105 whitespace-nowrap">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         {{ __('messages.new_event') }}
                     </button>
@@ -33,14 +33,14 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                         </div>
-                        <input type="text" id="search" placeholder="Search events by title..." class="pl-10 pr-4 block w-full rounded-lg border border-slate-300 bg-white py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
+                        <input type="text" id="search" x-model="search" @input.debounce.300ms="fetchEvents()" placeholder="Search events by title..." class="pl-10 pr-4 block w-full rounded-lg border border-slate-300 bg-white py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
                     </div>
 
                     <!-- Category Filter -->
                     <div class="relative">
                         <label for="category-filter" class="sr-only">Filter by category</label>
                         <div class="relative">
-                            <select id="category-filter" class="appearance-none block w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-3 pr-10 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
+                            <select id="category-filter" x-model="category" @change="fetchEvents()" class="appearance-none block w-full rounded-lg border border-slate-300 bg-white py-2.5 pl-3 pr-10 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
                                 <option value="">All Categories</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -62,7 +62,7 @@
     </div>
 
     <!-- Create/Edit Modal -->
-    <div id="event-modal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="event-modal" x-show="modalOpen" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true" x-transition>
         <!-- Backdrop -->
         <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity opacity-100"></div>
 
@@ -72,38 +72,37 @@
                 <!-- Modal Header -->
                 <div class="bg-white px-6 py-4 border-b border-slate-200 flex items-center justify-between">
                     <h3 class="text-xl font-bold text-slate-900" id="modal-title">Event Details</h3>
-                    <button type="button" onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition-colors rounded-lg p-1 hover:bg-slate-100">
+                    <button type="button" @click="closeModal()" class="text-slate-400 hover:text-slate-600 transition-colors rounded-lg p-1 hover:bg-slate-100">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
 
                 <!-- Modal Body -->
-                <form id="event-form" class="p-6 space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
+                <form @submit.prevent="submitForm()" class="p-6 space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
                     @csrf
-                    <input type="hidden" id="event-id">
                     
                     <!-- Title Field -->
                     <div>
                         <label for="title" class="block text-sm font-semibold text-slate-700 mb-2">Event Title</label>
-                        <input type="text" name="title" id="title" class="block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" placeholder="e.g., Annual Tech Conference">
+                        <input type="text" name="title" x-model="form.title" id="title" class="block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" placeholder="e.g., Annual Tech Conference">
                     </div>
 
                     <!-- Description Field -->
                     <div>
                         <label for="description" class="block text-sm font-semibold text-slate-700 mb-2">Description</label>
-                        <textarea name="description" id="description" rows="4" class="block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" placeholder="Describe the event..."></textarea>
+                        <textarea name="description" x-model="form.description" id="description" rows="4" class="block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors" placeholder="Describe the event..."></textarea>
                     </div>
 
                     <!-- Date & Status Row -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="event_date" class="block text-sm font-semibold text-slate-700 mb-2">Date & Time</label>
-                            <input type="datetime-local" name="event_date" id="event_date" class="block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
+                            <input type="datetime-local" name="event_date" x-model="form.event_date" id="event_date" class="block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
                         </div>
                         <div>
                             <label for="status" class="block text-sm font-semibold text-slate-700 mb-2">Status</label>
                             <div class="relative">
-                                <select name="status" id="status" class="appearance-none block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 pr-10 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
+                                <select name="status" x-model="form.status" id="status" class="appearance-none block w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 pr-10 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
                                     <option value="draft">Draft</option>
                                     <option value="published">Published</option>
                                 </select>
@@ -120,7 +119,7 @@
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                             @foreach($categories as $category)
                                 <div class="relative">
-                                    <input type="checkbox" name="categories[]" value="{{ $category->id }}" id="cat_{{ $category->id }}" class="peer sr-only">
+                                    <input type="checkbox" name="categories[]" x-model="form.categories" value="{{ $category->id }}" id="cat_{{ $category->id }}" class="peer sr-only">
                                     <label for="cat_{{ $category->id }}" class="flex items-center justify-center px-3 py-2.5 text-sm font-medium text-slate-600 bg-white border-2 border-slate-200 rounded-lg cursor-pointer transition-all peer-checked:border-blue-500 peer-checked:text-blue-600 peer-checked:bg-blue-50 hover:border-slate-300">
                                         {{ $category->name }}
                                     </label>
@@ -146,10 +145,10 @@
 
                 <!-- Modal Footer -->
                 <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex items-center justify-end gap-3">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-white text-slate-700 font-semibold border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+                    <button type="button" @click="closeModal()" class="px-4 py-2 bg-white text-slate-700 font-semibold border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
                         Cancel
                     </button>
-                    <button type="submit" form="event-form" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
                         Save Event
                     </button>
                 </div>
@@ -158,129 +157,124 @@
     </div>
 
     <script>
-        // Filter & Search Logic
-        const searchInput = document.getElementById('search');
-        const categoryFilter = document.getElementById('category-filter');
-        let timeoutId;
+        function adminEvents() {
+            return {
+                events: @json($events->items()),
+                search: '',
+                category: '',
+                modalOpen: false,
+                editingEvent: null,
+                form: {
+                    title: '',
+                    description: '',
+                    event_date: '',
+                    status: 'draft',
+                    categories: []
+                },
+                init() {
+                    document.addEventListener('click', (e) => {
+                        if (e.target.closest('.pagination a')) {
+                            e.preventDefault();
+                            const url = new URL(e.target.closest('.pagination a').href);
+                            const page = url.searchParams.get('page');
+                            this.fetchEvents(page);
+                        }
+                    });
+                },
+                fetchEvents(page = 1) {
+                    fetch(`{{ route('admin.events.index') }}?page=${page}&search=${this.search}&category=${this.category}`, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById('table-wrapper').innerHTML = html;
+                    });
+                },
+                openCreateModal() {
+                    this.form = {
+                        title: '',
+                        description: '',
+                        event_date: '',
+                        status: 'draft',
+                        categories: []
+                    };
+                    this.editingEvent = null;
+                    document.getElementById('modal-title').textContent = 'Create New Event';
+                    this.modalOpen = true;
+                },
+                openEditModal(event) {
+                    this.form = {
+                        title: event.title,
+                        description: event.description,
+                        event_date: event.event_date.replace(' ', 'T'),
+                        status: event.status,
+                        categories: event.categories.map(c => c.id)
+                    };
+                    this.editingEvent = event;
+                    document.getElementById('modal-title').textContent = 'Edit Event';
+                    this.modalOpen = true;
+                },
+                closeModal() {
+                    this.modalOpen = false;
+                },
+                submitForm() {
+                    const formData = new FormData();
+                    formData.append('title', this.form.title);
+                    formData.append('description', this.form.description);
+                    formData.append('event_date', this.form.event_date);
+                    formData.append('status', this.form.status);
+                    this.form.categories.forEach(cat => formData.append('categories[]', cat));
+                    const imageInput = document.getElementById('image');
+                    if (imageInput.files[0]) {
+                        formData.append('image', imageInput.files[0]);
+                    }
 
-        function fetchEvents(page = 1) {
-            const search = searchInput.value;
-            const category = categoryFilter.value;
-            
-            fetch(`{{ route('admin.events.index') }}?page=${page}&search=${search}&category=${category}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
+                    const url = this.editingEvent ? `/admin/events/${this.editingEvent.id}` : '{{ route('admin.events.store') }}';
+                    const method = this.editingEvent ? 'PUT' : 'POST';
+
+                    if (this.editingEvent) {
+                        formData.append('_method', 'PUT');
+                    }
+
+                    fetch(url, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                    .then(async response => {
+                        const json = await response.json();
+                        if (response.ok) {
+                            this.closeModal();
+                            this.fetchEvents();
+                        } else {
+                            alert('Error: ' + (json.message || 'Check your inputs'));
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                },
+                deleteEvent(id) {
+                    if (!confirm('Are you sure you want to delete this event?')) return;
+
+                    fetch(`/admin/events/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            this.fetchEvents();
+                        } else {
+                            alert('Error deleting event');
+                        }
+                    });
                 }
-            })
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('table-wrapper').innerHTML = html;
-            });
-        }
-
-        searchInput.addEventListener('input', () => {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => fetchEvents(), 300);
-        });
-        
-        categoryFilter.addEventListener('change', () => fetchEvents());
-
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.pagination a')) {
-                e.preventDefault();
-                const url = new URL(e.target.closest('.pagination a').href);
-                const page = url.searchParams.get('page');
-                fetchEvents(page);
             }
-        });
-
-        // Modal Logic
-        const modal = document.getElementById('event-modal');
-        const form = document.getElementById('event-form');
-        const modalTitle = document.getElementById('modal-title');
-        const eventIdInput = document.getElementById('event-id');
-
-        function openCreateModal() {
-            form.reset();
-            eventIdInput.value = '';
-            modalTitle.textContent = 'Create New Event';
-            modal.classList.remove('hidden');
         }
-
-        function closeModal() {
-            modal.classList.add('hidden');
-        }
-
-        window.openEditModal = function(button) {
-            const event = JSON.parse(button.getAttribute('data-event'));
-            
-            form.reset();
-            eventIdInput.value = event.id;
-            modalTitle.textContent = 'Edit Event';
-            
-            document.getElementById('title').value = event.title;
-            document.getElementById('description').value = event.description;
-            document.getElementById('event_date').value = event.event_date.replace(' ', 'T');
-            document.getElementById('status').value = event.status;
-
-            document.querySelectorAll('input[name="categories[]"]').forEach(cb => {
-                cb.checked = false;
-            });
-            event.categories.forEach(cat => {
-                const cb = document.getElementById(`cat_${cat.id}`);
-                if (cb) cb.checked = true;
-            });
-
-            modal.classList.remove('hidden');
-        }
-
-        window.deleteEvent = function(id) {
-            if (!confirm('Are you sure you want to delete this event?')) return;
-
-            fetch(`/admin/events/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    fetchEvents();
-                } else {
-                    alert('Error deleting event');
-                }
-            });
-        }
-
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(form);
-            const id = eventIdInput.value;
-            const url = id ? `/admin/events/${id}` : '{{ route('admin.events.store') }}';
-            
-            if (id) {
-                formData.append('_method', 'PUT');
-            }
-
-            fetch(url, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-            })
-            .then(async response => {
-                const json = await response.json();
-                if (response.ok) {
-                    closeModal();
-                    fetchEvents();
-                } else {
-                    alert('Error: ' + (json.message || 'Check your inputs'));
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
     </script>
 </x-app-layout>
