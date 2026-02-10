@@ -122,7 +122,58 @@ style: |
 
 ---
 
-## Sujet - Live coding
+## Versions
 
-* Bouton **"Ajouter un événement"** ouvrant une modale de création.
-* Barre de recherche filtrant les événements par titre en temps réel.
+| Version | Description | Branche |
+| :--- | :--- | :--- |
+| **v1** | Public Side (Consultation, Recherche, Filtre) | `public` |
+| **v2** | Admin Side (CRUD, Modales) | `admin` |
+| **v3** | Authentification / Authorization (Gates) | `gates` |
+| **v4** | SPA / AJAX | `spa-ajax` |
+| **v5** | SPA / Alpine.js | `spa-alpine` |
+| **v6** | Spatie / Authorization | `spatie` |
+| **v7** | API | `api` |
+| **v8** | Mobile App | `mobile` |
+
+---
+
+## **v1** Public Side - Live Coding
+* Creation du portfolio personnel
+
+---
+
+## **v2** Admin Side - Live Coding
+* Gestion des articles (CRUD)
+
+---
+
+## **v3** Authentification / Authorization - Live Coding
+* 
+
+---
+
+## **v4** SPA / AJAX - Live Coding
+* Un bouton “Ajouter” qui ouvre une modale pour créer un nouvel élément. <br>
+* Une barre de recherche filtrant des éléments par titre.
+
+---
+
+## **v5** SPA / Alpine.js - Live Coding
+* 
+
+---
+
+## **v6** Spatie / Authorization - Live Coding
+* 
+
+---
+
+## **v7** API - Live Coding
+* 
+
+---
+
+## **v8** Mobile App - Live Coding
+* 
+
+---
