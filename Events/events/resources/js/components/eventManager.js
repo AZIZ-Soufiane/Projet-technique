@@ -133,12 +133,6 @@ export default ({
         this.isEdit = false;
         this.editingEvent = null;
         this.modalOpen = true;
-
-        // Update modal title
-        const modalTitle = document.getElementById('modal-title');
-        if (modalTitle) {
-            modalTitle.textContent = 'Create New Event';
-        }
     },
 
     openEditModal(event) {
@@ -160,12 +154,6 @@ export default ({
         }
 
         this.modalOpen = true;
-
-        // Update modal title
-        const modalTitle = document.getElementById('modal-title');
-        if (modalTitle) {
-            modalTitle.textContent = 'Edit Event';
-        }
     },
 
     closeModal() {
