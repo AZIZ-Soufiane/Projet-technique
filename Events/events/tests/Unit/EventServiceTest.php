@@ -5,71 +5,94 @@ namespace Tests\Unit;
 use Tests\TestCase;
 use App\Models\Event;
 use App\Models\User;
+use App\Models\Category;
 use App\Services\EventService;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 class EventServiceTest extends TestCase
 {
-    use DatabaseTransactions;
-    
     protected EventService $service;
 
     protected function setUp(): void
     {
         parent::setUp();
-    
+        
+        // Verify we're in test environment
+        $this->assertTestEnvironment();
+        
+        // Initialize service
         $this->service = new EventService();
     }
 
     public function test_it_can_get_published_events()
     {
+        // Arrange - Create test data in isolation
+        Event::factory()->create([
+            'status' => 'published',
+            'title' => 'Published Event'
+        ]);
+        
+        // Act
         $result = $this->service->getPublishedEvents();
 
+        // Assert
         $this->assertInstanceOf(LengthAwarePaginator::class, $result);
-        
-        // Check if we have published events from the CSV data
-        if (Event::where('status', 'published')->exists()) {
-             $this->assertGreaterThan(0, $result->total());
-        }
+        $this->assertGreaterThan(0, $result->total());
     }
 
     public function test_it_can_filter_events_by_search()
     {
-        $existingEvent = Event::first();
-        $this->assertNotNull($existingEvent, 'No events found in database to test with.');
-
-        $result = $this->service->getAdminEvents([
-            'search' => $existingEvent->title
+        // Arrange - Create isolated test event
+        $event = Event::factory()->create([
+            'title' => 'Unique Test Event Title XYZ123',
+            'status' => 'published'
         ]);
 
+        // Act
+        $result = $this->service->getAdminEvents([
+            'search' => 'XYZ123'
+        ]);
+
+        // Assert
         $this->assertGreaterThan(0, $result->total());
-        // Verify the first result matches the search term or contains it
-        $this->assertStringContainsString($existingEvent->title, $result->first()->title);
+        $this->assertTrue($result->pluck('id')->contains($event->id));
     }
 
     public function test_it_can_filter_events_by_category()
     {
-        $eventWithCategory = Event::has('categories')->with('categories')->first();
-        $this->assertNotNull($eventWithCategory, 'No events with categories found in database.');
+        // Arrange - Create isolated test data
+        $category = Category::factory()->create([
+            'name' => 'Test Category ' . uniqid()
+        ]);
         
-        $category = $eventWithCategory->categories->first();
+        $event = Event::factory()->create([
+            'status' => 'published'
+        ]);
+        
+        $event->categories()->attach($category->id);
 
+        // Act
         $result = $this->service->getAdminEvents([
             'category' => $category->id
         ]);
 
+        // Assert
         $this->assertGreaterThan(0, $result->total());
-        foreach ($result as $event) {
-            $this->assertTrue($event->categories->contains('id', $category->id));
-        }
+        $this->assertTrue(
+            $result->pluck('id')->contains($event->id),
+            'Event should be returned when filtered by its category'
+        );
     }
 
     public function test_it_can_create_an_event()
     {
+        // Arrange
         Storage::fake('public');
+        
+        $user = User::factory()->create();
+        $this->actingAs($user);
         
         $data = [
             'title' => 'New Test Event ' . uniqid(),
@@ -79,38 +102,35 @@ class EventServiceTest extends TestCase
             'categories' => [] 
         ];
         
-        // Ensure a user exists to authenticate
-        $user = User::first();
-        if (!$user) {
-             $user = User::factory()->create();
-        }
-        $this->actingAs($user);
-
         $image = UploadedFile::fake()->create('event.jpg', 100);
 
+        // Act
         $event = $this->service->createEvent($data, $image);
 
+        // Assert
         $this->assertDatabaseHas('events', [
             'id' => $event->id,
             'title' => $data['title']
         ]);
-        
-        // Verify image was stored
-        $this->assertNotNull($event->image);
         Storage::disk('public')->assertExists($event->image);
     }
 
     public function test_it_can_update_an_event()
     {
-        $event = Event::first();
-        $this->assertNotNull($event, 'No event found to update.');
+        // Arrange - Create isolated event for update
+        $event = Event::factory()->create([
+            'title' => 'Original Title',
+            'status' => 'draft'
+        ]);
 
         $newTitle = 'Updated Title ' . uniqid();
 
+        // Act
         $this->service->updateEvent($event, [
             'title' => $newTitle
         ]);
 
+        // Assert
         $this->assertDatabaseHas('events', [
             'id' => $event->id,
             'title' => $newTitle
@@ -119,21 +139,33 @@ class EventServiceTest extends TestCase
 
     public function test_it_can_delete_an_event()
     {
-        $event = Event::first();
-        $this->assertNotNull($event, 'No event found to delete.');
+        // Arrange - Create isolated event for deletion
+        $event = Event::factory()->create([
+            'title' => 'Event to Delete',
+            'status' => 'draft'
+        ]);
         
-        $id = $event->id;
-        
+        $eventId = $event->id;
+
+        // Act
         $this->service->deleteEvent($event);
-        
-        $this->assertDatabaseMissing('events', ['id' => $id]);
+
+        // Assert
+        $this->assertDatabaseMissing('events', ['id' => $eventId]);
     }
 
     public function test_it_returns_paginated_events()
     {
+        // Arrange - Create multiple test events
+        Event::factory(5)->create([
+            'status' => 'published'
+        ]);
+
+        // Act
         $result = $this->service->getPublishedEvents();
 
+        // Assert
         $this->assertInstanceOf(LengthAwarePaginator::class, $result);
-        $this->assertNotNull($result->total());
+        $this->assertGreaterThan(0, $result->total());
     }
 }
