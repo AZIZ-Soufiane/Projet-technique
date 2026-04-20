@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,9 +19,9 @@ class EventFactory extends Factory
             'title' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph(3),
             'event_date' => $this->faker->dateTimeBetween('+1 week', '+3 months'),
-            'location' => $this->faker->city(),
-            'status' => $this->faker->randomElement(['draft', 'published', 'archived']),
+            'status' => $this->faker->randomElement(['draft', 'published']),
             'image' => null,
+            'user_id' => User::factory(),
             'created_at' => now(),
             'updated_at' => now(),
         ];
@@ -43,16 +44,6 @@ class EventFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => 'draft',
-        ]);
-    }
-
-    /**
-     * Indicate that the event is archived.
-     */
-    public function archived(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'status' => 'archived',
         ]);
     }
 }
